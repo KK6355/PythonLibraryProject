@@ -1,0 +1,204 @@
+{% extends "staff.html" %} {% block content %}
+<div class="row">
+  <div class="col-auto">
+    <h3>Current Loan</h3>
+  </div>
+  <div class="col text-end">
+    <a
+      class="btn btn-primary"
+      type="button"
+      style="background-color: #212529; border: none; font-size: 14px"
+      data-bs-toggle="modal"
+      data-bs-target="#addLoan"
+      >Add Loan</a
+    >
+  </div>
+  <!-- Add Loan modal below -->
+  <div
+    class="modal fade"
+    id="addLoan"
+    tabindex="-1"
+    aria-labelledby="addLoanModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5">Add Loan</h1>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+          <form method="post" action="/addloan">
+            <div class="mb-3">
+              <label>Borrower:</label>
+              <select
+                class="form-select"
+                id="borrower"
+                name="borrower"
+                required
+              >
+                <option selected value="">Choose Borrower from list</option>
+                <!-- fetch data from render template -->
+                {% for borrower in borrowers %}
+                <option value="{{borrower[0]}}">
+                  {{borrower[1]}}&nbsp;{{borrower[2]}}&nbsp;{{borrower[0]}}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-3">
+              <label>Book:</label>
+              <select class="form-select" id="book" name="book" required>
+                <option selected value="">Choose Book from list</option>
+                {% for book in books %}
+                <option value="{{book[0]}}">
+                  {{book[4]}}&nbsp;&nbsp;&nbsp;<span style="font-weight: bold"
+                    >{{book[2]}}</span
+                  >
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            <input
+              class="form-control"
+              type="hidden"
+              id="loandate"
+              name="loandate"
+              value="{{loandate}}"
+            />
+
+            <br />
+            <div class="mb-3">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary">Add Loan</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Add loan modal above -->
+</div>
+<br />
+<hr />
+<!-- render a list of current loans  -->
+<table class="table table-hover">
+  <tr>
+    <th>Borrower Name</th>
+    <th>Book Title</th>
+    <th>Bookcopy ID</th>
+    <th>Book Format</th>
+    <th>Loan Id</th>
+    <th>Loan Status</th>
+    <th>Operation</th>
+  </tr>
+  {% for loan in loanlist %}
+  <!-- set a new name variable which renders borrowers' full name  -->
+  {% set name=loan[1] +" "+ loan[2] %}
+  <!-- set a new status variable to show if the book is returned, and set the default value='Returned' -->
+  {% set status="Returned" %}
+  <!-- check the value of loan[6], if loan[6]==0, set status to "On Loaned" -->
+  {% if not loan[7] %} {% set status="On Loaned" %} {% endif %}
+  <!-- check the book formate, if it is in the defined list, set the row background color to a certain color -->
+  <tr>
+    <!-- check if the current name == the full name from previous entry in the loop, then don't print name, otherwise, print name in table -->
+    <!-- By doing it, the name will only be printed once in the same loop -->
+    {% if name == loanlist[loop.index0-1][1] +" "+ loanlist[loop.index0-1][2] %}
+    <td></td>
+    {% else %}
+    <td>{{name}}</td>
+    {% endif %}
+    <td>{{loan[9]}}</td>
+    <td>{{loan[4]}}</td>
+    {% if loan[13] in ["eBOOK","Audio Book"] %}
+    <td style="color: #0085a1">{{loan[13]}}</td>
+    {%else%}
+    <td>{{loan[13]}}</td>
+    {%endif%}
+    <td>{{loan[6]}}</td>
+    <td>{{status}}</td>
+    {%if status=="On Loaned"%}
+    <td>
+      <a
+        class="btn btn-primary"
+        type="button"
+        data-bs-toggle="modal"
+        data-bs-target="#returnBook{{loan[6]}}"
+        >Return</a
+      >
+    </td>
+    <!-- Return alert modal below-->
+    <div
+      class="modal fade"
+      id="returnBook{{loan[6]}}"
+      tabindex="-1"
+      aria-labelledby="returnModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Return Book</h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <h5>Are you sure you want to return this book?</h5>
+            <br />
+            <p>Loan Id:&nbsp;{{loan[6]}}</p>
+            <p>Borrower:&nbsp;{{name}}</p>
+          </div>
+          <div class="modal-footer">
+            <form method="post" action="/staff/returnBook">
+              <input
+                type="number"
+                class="form-control"
+                id="id"
+                name="id"
+                hidden
+                value="{{loan[6]}}"
+              />
+              <input
+                type="number"
+                class="form-control"
+                id="returned"
+                name="returned"
+                hidden
+                value="1"
+              />
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary">Confirm</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Return alert modal above-->
+    {%endif%}
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

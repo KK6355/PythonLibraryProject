@@ -1,0 +1,38 @@
+<!-- sidebar nav for loan report section to use  -->
+<div
+  class="col-3"
+  style="background-color: #0085a1; color: white; text-align: right"
+>
+  <ul style="list-style-type: none">
+    <div class="row">
+      <li>
+        <a
+          class="btn btn-primary"
+          style="font-size: 14px"
+          href="{{ url_for('overduereport') }}"
+          >Overdue Report</a
+        >
+      </li>
+    </div>
+    <div class="row">
+      <li>
+        <a
+          class="btn btn-primary"
+          style="font-size: 14px"
+          href="{{ url_for('loansummary') }}"
+          >Loan Summary</a
+        >
+      </li>
+    </div>
+    <div class="row">
+      <li>
+        <a
+          class="btn btn-primary"
+          style="font-size: 14px"
+          href="{{ url_for('borrowersummary') }}"
+          >Borrower Summary</a
+        >
+      </li>
+    </div>
+  </ul>
+</div>

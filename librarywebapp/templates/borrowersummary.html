@@ -1,0 +1,29 @@
+{% extends "staff.html" %} {% block content %}
+
+<div class="row gx-5">
+  {% include "sidebar.html" %}
+  <div class="col-9" style="text-align: left">
+    <div class="row"><h2>Borrower Summary</h2></div>
+    <br />
+    <hr />
+    <div class="row">
+      <!-- render borrowers and their loan count -->
+      <table class="table table-hover">
+        <tr>
+          <th>Borrower Name</th>
+          <th>Borrower ID</th>
+          <th>Loan Count</th>
+        </tr>
+        {% for summary in summaryList %}
+        <tr>
+          {% for entry in summary %}
+          <td>{{entry}}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

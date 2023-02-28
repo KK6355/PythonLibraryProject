@@ -1,0 +1,40 @@
+{% extends "staff.html" %} {% block content %}
+
+<div class="row gx-5">
+  {% include "sidebar.html" %}
+  <div class="col-9" style="text-align: left">
+    <div class="row"><h2>Overdue Report</h2></div>
+    <br />
+    <hr />
+    <div class="row">
+      <!-- render all overdue record and its borrower -->
+      <table class="table table-striped table-hover">
+        <tr>
+          <th>Borrower Name</th>
+          <th>Borrower ID</th>
+          <th>Book Title</th>
+          <th>Book Format</th>
+          <th>Overdue Days</th>
+        </tr>
+        {% for overdue in overdueList %}
+        <tr>
+          <!-- show the overdue borrower info just once -->
+          {%if [overdue[0],overdue[1]] !=
+          [overdueList[loop.index0-1][0],overdueList[loop.index0-1][1]]%}
+          <td>{{overdue[0]}}</td>
+          <td>{{overdue[1]}}</td>
+          {%else%}
+          <td></td>
+          <td></td>
+          {%endif%}
+          <td>{{overdue[2]}}</td>
+          <td>{{overdue[3]}}</td>
+          <td>{{overdue[4]}}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
